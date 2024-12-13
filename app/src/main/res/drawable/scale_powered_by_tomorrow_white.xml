@@ -1,0 +1,5 @@
+<scale xmlns:android="http://schemas.android.com/apk/res/android"
+    android:scaleWidth="0.6"
+    android:scaleHeight="0.6"
+    android:drawable="@drawable/powered_by_tomorrow_white"
+    android:gravity="center_horizontal|bottom" />
