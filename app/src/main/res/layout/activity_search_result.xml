@@ -20,26 +20,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<!--    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
 
-        <TextView
-            android:id="@+id/search_query"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Search Results"
-            android:textSize="24sp"
-            android:textColor="@android:color/black" />
-    </RelativeLayout>
+<!--        <TextView-->
+<!--            android:id="@+id/search_query"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            android:text="Search Results"-->
+<!--            android:textSize="24sp"-->
+<!--            android:textColor="@android:color/black" />-->
+<!--    </RelativeLayout>-->
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/custom_toolbar">
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/custom_toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <!-- ProgressBar -->
         <LinearLayout
@@ -346,6 +349,16 @@
             </androidx.cardview.widget.CardView>
 
         </RelativeLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_add_to_favorites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/add_fav"
+            app:backgroundTint="@color/gray"
+            android:contentDescription="Add to favorites" />
 
     </FrameLayout>
 

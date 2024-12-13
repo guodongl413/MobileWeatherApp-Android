@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,12 +24,16 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SearchResultActivity extends AppCompatActivity {
+
+    private boolean isFavorite = false; // 用于跟踪当前状态
+    private FloatingActionButton fabAddToFavorites; // 定义 FloatingActionButton
 
     private LinearLayout progressLayout;
     private RelativeLayout mainContent;
@@ -74,7 +79,7 @@ public class SearchResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // 重用 MainActivity 的布局
+        setContentView(R.layout.activity_search_result); // 重用 MainActivity 的布局
 
         // 接收从 MainActivity 传递的参数
         Intent intent = getIntent();
@@ -146,6 +151,26 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
 
                 startActivity(intent);
+            }
+        });
+
+        // 初始化 FloatingActionButton
+        fabAddToFavorites = findViewById(R.id.fab_add_to_favorites);
+
+        // 设置点击监听器
+        fabAddToFavorites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isFavorite) {
+                    // 从收藏中移除
+                    Toast.makeText(SearchResultActivity.this, city + " was removed from favorites", Toast.LENGTH_SHORT).show();
+                    fabAddToFavorites.setImageResource(R.drawable.add_fav); // 替换为 "add" 图标
+                } else {
+                    // 添加到收藏
+                    Toast.makeText(SearchResultActivity.this, city + " was added to favorites", Toast.LENGTH_SHORT).show();
+                    fabAddToFavorites.setImageResource(R.drawable.rem_fav); // 替换为 "remove" 图标
+                }
+                isFavorite = !isFavorite; // 切换状态
             }
         });
     }
