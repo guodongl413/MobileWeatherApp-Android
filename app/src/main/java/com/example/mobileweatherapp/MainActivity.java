@@ -2,6 +2,7 @@ package com.example.mobileweatherapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -157,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchItem.setIcon(R.drawable.search); // 强制设置图标
         SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
         searchView.setQueryHint("Search for a city...");
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

@@ -42,4 +42,11 @@
     <style name="MainActivityOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/search</item>
     </style>
+
+    <style name="Theme.SearchResultActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- 你的自定义主题内容 -->
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
 </resources>

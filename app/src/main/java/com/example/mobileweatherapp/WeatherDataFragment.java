@@ -101,7 +101,8 @@ public class WeatherDataFragment extends Fragment {
 
             // 应用图表选项
             chartView.setOptions(options);
-            chartView.reload(); // 刷新图表
+            chartView.invalidate(); // 刷新图表
+            
             Log.d("WeatherDataFragment", "Chart options successfully set.");
 
         } catch (Exception e) {
