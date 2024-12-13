@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -11,8 +13,14 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.ImageView;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,6 +32,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,6 +91,13 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("WeatherApp", "onCreate is called");
 
+        // 初始化自定义 Toolbar
+        Toolbar toolbar = findViewById(R.id.custom_toolbar);
+        setSupportActionBar(toolbar);
+
+        // 可选：设置标题或菜单项
+        getSupportActionBar().setTitle("WeatherApp");
+
         // 初始化 ProgressBar 和主界面
         progressLayout = findViewById(R.id.progress_layout);
         mainContent = findViewById(R.id.main_content);
@@ -130,6 +148,94 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // 获取搜索视图并设置监听器
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchItem.setIcon(R.drawable.search); // 强制设置图标
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint("Search for a city...");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // 处理搜索提交逻辑
+                performSearch(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // 自动完成逻辑
+                fetchAutocompleteSuggestions(newText);
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+    private void performSearch(String query) {
+        if (query != null && !query.trim().isEmpty()) {
+            Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+            intent.putExtra("query", query); // 将搜索关键词传递到搜索结果页面
+            startActivity(intent);
+        }
+    }
+
+    private void fetchAutocompleteSuggestions(String input) {
+        String autocompleteApiUrl = "https://backend-dot-weather-search-project-440903.wl.r.appspot.com/api/autocomplete?input=" + input;
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, autocompleteApiUrl, null,
+                response -> {
+                    try {
+                        JSONArray predictions = response.getJSONArray("predictions");
+                        List<String> suggestions = new ArrayList<>();
+
+                        for (int i = 0; i < predictions.length(); i++) {
+                            JSONObject prediction = predictions.getJSONObject(i);
+                            suggestions.add(prediction.getString("description"));
+                        }
+
+                        // 更新 RecyclerView
+                        updateAutocompleteSuggestions(suggestions);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> error.printStackTrace()
+        );
+
+        queue.add(request);
+    }
+
+    private void updateAutocompleteSuggestions(List<String> suggestions) {
+        RecyclerView recyclerView = findViewById(R.id.autocomplete_recycler);
+
+        if (suggestions.isEmpty()) {
+            recyclerView.setVisibility(View.GONE); // 隐藏列表
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+
+            // 初始化或更新适配器
+            AutocompleteAdapter adapter = new AutocompleteAdapter(suggestions, suggestion -> {
+                // 填充搜索框并执行搜索
+                SearchView searchView = findViewById(R.id.action_search);
+                searchView.setQuery(suggestion, false); // 填充搜索框
+                performSearch(suggestion); // 执行搜索
+            });
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
+    }
+
+
 
     /**
      * 使用 IPinfo 获取位置并调用天气 API

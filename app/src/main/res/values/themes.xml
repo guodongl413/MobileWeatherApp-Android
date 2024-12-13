@@ -17,4 +17,29 @@
     <style name="AppTheme.Launcher" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
+
+    <!-- MainActivity 专属主题 -->
+    <style name="Theme.MainActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary colors -->
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- 设置用于 MainActivity 的 Toolbar 样式 -->
+        <item name="toolbarStyle">@style/MainActivityToolbarStyle</item>
+        <!-- 溢出按钮样式 -->
+        <item name="actionOverflowButtonStyle">@style/MainActivityOverflowButtonStyle</item>
+    </style>
+
+    <!-- MainActivity 专属 Toolbar 样式 -->
+    <style name="MainActivityToolbarStyle" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">@color/black</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="subtitleTextColor">@android:color/white</item>
+        <item name="actionOverflowButtonStyle">@style/MainActivityOverflowButtonStyle</item>
+    </style>
+
+    <!-- 溢出按钮（菜单按钮）的样式 -->
+    <style name="MainActivityOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/search</item>
+    </style>
 </resources>
