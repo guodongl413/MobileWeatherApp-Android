@@ -182,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
         if (query != null && !query.trim().isEmpty()) {
             Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
             intent.putExtra("query", query); // 将搜索关键词传递到搜索结果页面
+            Log.d("MainActivity", "query" + query);
             startActivity(intent);
         }
     }

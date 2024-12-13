@@ -35,7 +35,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/custom_toolbar"
-        android:visibility="gone" /> <!-- 默认隐藏 -->
+        android:visibility="gone"
+        android:background="@android:color/white"
+        android:elevation="5dp" /> <!-- 默认隐藏 -->
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
