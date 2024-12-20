@@ -1,7 +1,9 @@
 package com.example.mobileweatherapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,8 +25,10 @@ import androidx.core.view.WindowInsetsCompat;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.android.volley.toolbox.JsonArrayRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +36,7 @@ import org.json.JSONObject;
 
 public class SearchResultActivity extends AppCompatActivity {
 
+    private RequestQueue requestQueue;
     private boolean isFavorite = false; // 用于跟踪当前状态
     private FloatingActionButton fabAddToFavorites; // 定义 FloatingActionButton
 
@@ -157,20 +162,35 @@ public class SearchResultActivity extends AppCompatActivity {
         // 初始化 FloatingActionButton
         fabAddToFavorites = findViewById(R.id.fab_add_to_favorites);
 
+        // 初始化 RequestQueue
+        requestQueue = Volley.newRequestQueue(this);
+
+        // 检查当前城市是否已被收藏
+        checkIfCityIsFavorite(city);
+
         // 设置点击监听器
         fabAddToFavorites.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (requestQueue == null) {
+                    Log.e("SearchResultActivity", "requestQueue is NULL");
+                } else {
+                    Log.e("SearchResultActivity", "requestQueue is NOT NULL");
+                }
+
                 if (isFavorite) {
                     // 从收藏中移除
-                    Toast.makeText(SearchResultActivity.this, city + " was removed from favorites", Toast.LENGTH_SHORT).show();
-                    fabAddToFavorites.setImageResource(R.drawable.add_fav); // 替换为 "add" 图标
+//                    Toast.makeText(SearchResultActivity.this, city + " was removed from favorites", Toast.LENGTH_SHORT).show();
+//                    fabAddToFavorites.setImageResource(R.drawable.add_fav); // 替换为 "add" 图标
+                    deleteFavoriteCity(city);
                 } else {
                     // 添加到收藏
-                    Toast.makeText(SearchResultActivity.this, city + " was added to favorites", Toast.LENGTH_SHORT).show();
-                    fabAddToFavorites.setImageResource(R.drawable.rem_fav); // 替换为 "remove" 图标
+//                    Toast.makeText(SearchResultActivity.this, city + " was added to favorites", Toast.LENGTH_SHORT).show();
+//                    fabAddToFavorites.setImageResource(R.drawable.rem_fav); // 替换为 "remove" 图标
+                    addFavoriteCity(city, state);
                 }
-                isFavorite = !isFavorite; // 切换状态
+//                isFavorite = !isFavorite; // 切换状态
             }
         });
     }
@@ -366,5 +386,93 @@ public class SearchResultActivity extends AppCompatActivity {
     private void showMainContent() {
         progressLayout.setVisibility(View.GONE);
         mainContent.setVisibility(View.VISIBLE);
+    }
+
+    private void checkIfCityIsFavorite(String city) {
+        String url = "https://backend-dot-weather-search-project-440903.wl.r.appspot.com/api/favorites";
+
+        // 使用 JsonArrayRequest 处理 JSONArray 响应
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        Log.d("SearchResultActivity", "favoritesArray: " + response);
+                        isFavorite = false;
+
+                        // 遍历收藏城市列表
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject cityObj = response.getJSONObject(i);
+                            String favoriteCity = cityObj.getString("city");
+
+                            if (favoriteCity.equalsIgnoreCase(city)) {
+                                isFavorite = true;
+                                break;
+                            }
+                        }
+
+                        // 根据收藏状态更新按钮图标
+                        updateFabIcon();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    Toast.makeText(this, "Failed to fetch favorites", Toast.LENGTH_SHORT).show();
+                    error.printStackTrace();
+                });
+
+        requestQueue.add(request);
+    }
+
+    private void updateFabIcon() {
+        if (isFavorite) {
+            fabAddToFavorites.setImageResource(R.drawable.rem_fav); // Remove 图标
+        } else {
+            fabAddToFavorites.setImageResource(R.drawable.add_fav); // Add 图标
+        }
+    }
+
+    private void addFavoriteCity(String city, String state) {
+        String url = "https://backend-dot-weather-search-project-440903.wl.r.appspot.com/api/favorites";
+
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("city", city);
+            requestBody.put("state", state);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("SearchResultActivity", "requestBody" + requestBody);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, requestBody,
+                response -> {
+                    Toast.makeText(this, city + " added to favorites", Toast.LENGTH_SHORT).show();
+                    isFavorite = true;
+                    fabAddToFavorites.setImageResource(R.drawable.rem_fav); // 替换为 "remove" 图标
+                },
+                error -> {
+                    Toast.makeText(this, "Failed to add favorite", Toast.LENGTH_SHORT).show();
+                    try {
+                        Log.e("VolleyError", "Error: " + error.networkResponse.statusCode + " " + new String(error.networkResponse.data));
+                    } catch (Exception e) {
+                        Log.e("VolleyError", "Network response is null");
+                    }
+                });
+
+        requestQueue.add(request);
+    }
+
+    private void deleteFavoriteCity(String city) {
+        String url = "https://backend-dot-weather-search-project-440903.wl.r.appspot.com/api/favorites/" + Uri.encode(city);
+
+        StringRequest request = new StringRequest(Request.Method.DELETE, url,
+                response -> {
+                    Toast.makeText(this, city + " removed from favorites", Toast.LENGTH_SHORT).show();
+                    isFavorite = false;
+                    fabAddToFavorites.setImageResource(R.drawable.add_fav); // 替换为 "add" 图标
+                },
+                error -> Toast.makeText(this, "Failed to remove favorite", Toast.LENGTH_SHORT).show());
+
+        requestQueue.add(request);
     }
 }
