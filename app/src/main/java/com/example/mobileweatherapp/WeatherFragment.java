@@ -187,11 +187,6 @@ public class WeatherFragment extends Fragment {
                         visibility = valuesObj.getDouble("visibility");
                         pressure = valuesObj.getDouble("pressureSeaLevel");
 
-                        //Card 3
-//                        temperatureMax = valuesObj.getDouble("temperatureMax");
-//                        temperatureMin = valuesObj.getDouble("temperatureMin");
-
-
                         // 更新 UI
                         updateWeatherUI();
                         updateWeeklyForecast(intervalsArray);
