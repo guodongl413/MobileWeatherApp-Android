@@ -180,17 +180,11 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
 
                 if (isFavorite) {
-                    // 从收藏中移除
-//                    Toast.makeText(SearchResultActivity.this, city + " was removed from favorites", Toast.LENGTH_SHORT).show();
-//                    fabAddToFavorites.setImageResource(R.drawable.add_fav); // 替换为 "add" 图标
                     deleteFavoriteCity(city);
                 } else {
-                    // 添加到收藏
-//                    Toast.makeText(SearchResultActivity.this, city + " was added to favorites", Toast.LENGTH_SHORT).show();
-//                    fabAddToFavorites.setImageResource(R.drawable.rem_fav); // 替换为 "remove" 图标
                     addFavoriteCity(city, state);
                 }
-//                isFavorite = !isFavorite; // 切换状态
+
             }
         });
     }

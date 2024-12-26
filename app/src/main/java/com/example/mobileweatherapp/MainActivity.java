@@ -45,51 +45,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-//    //ProgressBar
-//    private LinearLayout progressLayout;
-//    private RelativeLayout mainContent;
-//
-//    JSONArray intervalsArray;
-//    private JSONObject valuesObj;
-//
-//    // 全局变量 - IPinfo 数据
-//    private String city;
-//    private String region;
-//    private double latitude;
-//    private double longitude;
-//
-//    // 全局变量 - 天气数据
-//    // Card 1
-//    private double temperature;
-//    private double temperatureApparent;
-//    private int weatherCode;
-//
-//    //Card 2
-//    private double humidity;
-//    private double windSpeed;
-//    private double visibility;
-//    private double pressure;
-//
-//    //Card 3
-//    private double temperatureMax;
-//    private double temperatureMin;
-//
-//    // UI 组件
-//    //Card 1
-//    private TextView temperatureTextView;
-//    private TextView weatherSummaryTextView;
-//    private TextView cityRegionTextView;
-//    private ImageView weatherIcon;
-//
-//    //Card 2
-//    private TextView humidityTextView;
-//    private TextView windSpeedTextView;
-//    private TextView visibilityTextView;
-//    private TextView pressureTextView;
-//
-//    //Card 3
-//    private TableLayout weeklyForecastTable;
-
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private ViewPagerAdapter viewPagerAdapter;
