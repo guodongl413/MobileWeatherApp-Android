@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -51,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerAdapter viewPagerAdapter;
     private List<Fragment> fragments = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
+
+    // 1) 新增：定义一个 ActivityResultLauncher 取代 onActivityResult
+    private ActivityResultLauncher<Intent> searchResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,38 +94,36 @@ public class MainActivity extends AppCompatActivity {
             // 设置内容描述
             tab.setContentDescription("Tab " + titles.get(position));
         }).attach();
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        // 2) 新增：注册一个 ActivityResultLauncher 用来替代 onActivityResult
+        searchResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    // 这个回调中的代码，取代你原先 onActivityResult(...) 内部的逻辑
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Intent data = result.getData();
+                        String action = data.getStringExtra("action");
+                        String city = data.getStringExtra("city");
 
-        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
-            String action = data.getStringExtra("action");
-            String city = data.getStringExtra("city");
+                        if ("add".equals(action)) {
+                            String state = data.getStringExtra("state");
+                            fragments.add(WeatherFragment.newInstance(city, state));
+                            titles.add(city);
+                        } else if ("remove".equals(action)) {
+                            int index = titles.indexOf(city);
+                            if (index != -1) {
+                                fragments.remove(index);
+                                titles.remove(index);
+                            }
+                        }
 
-            if ("add".equals(action)) {
-                String state = data.getStringExtra("state");
-                fragments.add(WeatherFragment.newInstance(city, state));
-                titles.add(city);
-            } else if ("remove".equals(action)) {
-                int index = titles.indexOf(city);
-                if (index != -1) {
-                    fragments.remove(index);
-                    titles.remove(index);
+                        // 通知适配器数据发生变化
+                        viewPagerAdapter.notifyDataSetChanged();
+                    }
                 }
-            }
+        );
 
-            // 通知适配器数据发生变化
-            viewPagerAdapter.notifyDataSetChanged();
-
-            // 重新绑定 TabLayout 和 ViewPager2
-            new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-                tab.setText(titles.get(position));
-            }).attach();
-        }
     }
-
 
     // 从后端 API 获取收藏城市
     private void loadFavoriteCities() {
@@ -189,9 +192,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
             intent.putExtra("query", query); // 将搜索关键词传递到搜索结果页面
             Log.d("MainActivity", "query" + query);
-//            startActivity(intent);
-            // 使用 startActivityForResult 传入 requestCode = 100
-            startActivityForResult(intent, 100);
+
+            // 不再用 startActivityForResult(intent, 100)
+            searchResultLauncher.launch(intent);
         }
     }
 
