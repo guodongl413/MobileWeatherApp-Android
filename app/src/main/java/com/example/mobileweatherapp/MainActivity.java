@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         loadFavoriteCities();
 
         // 设置 ViewPager 和 TabLayout
-        viewPagerAdapter = new ViewPagerAdapter(this, fragments);
+        viewPagerAdapter = new ViewPagerAdapter(this, fragments, titles);
         viewPager.setAdapter(viewPagerAdapter);
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -89,6 +90,37 @@ public class MainActivity extends AppCompatActivity {
             tab.setContentDescription("Tab " + titles.get(position));
         }).attach();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
+            String action = data.getStringExtra("action");
+            String city = data.getStringExtra("city");
+
+            if ("add".equals(action)) {
+                String state = data.getStringExtra("state");
+                fragments.add(WeatherFragment.newInstance(city, state));
+                titles.add(city);
+            } else if ("remove".equals(action)) {
+                int index = titles.indexOf(city);
+                if (index != -1) {
+                    fragments.remove(index);
+                    titles.remove(index);
+                }
+            }
+
+            // 通知适配器数据发生变化
+            viewPagerAdapter.notifyDataSetChanged();
+
+            // 重新绑定 TabLayout 和 ViewPager2
+            new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+                tab.setText(titles.get(position));
+            }).attach();
+        }
+    }
+
 
     // 从后端 API 获取收藏城市
     private void loadFavoriteCities() {
@@ -157,7 +189,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
             intent.putExtra("query", query); // 将搜索关键词传递到搜索结果页面
             Log.d("MainActivity", "query" + query);
-            startActivity(intent);
+//            startActivity(intent);
+            // 使用 startActivityForResult 传入 requestCode = 100
+            startActivityForResult(intent, 100);
         }
     }
 

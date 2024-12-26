@@ -181,8 +181,10 @@ public class SearchResultActivity extends AppCompatActivity {
 
                 if (isFavorite) {
                     deleteFavoriteCity(city);
+                    setResult(RESULT_OK, new Intent().putExtra("action", "remove").putExtra("city", city));
                 } else {
                     addFavoriteCity(city, state);
+                    setResult(RESULT_OK, new Intent().putExtra("action", "add").putExtra("city", city).putExtra("state", state));
                 }
 
             }
