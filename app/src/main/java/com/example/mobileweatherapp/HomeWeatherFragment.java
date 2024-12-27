@@ -177,8 +177,8 @@ public class HomeWeatherFragment extends Fragment {
                             e.printStackTrace();
                         }
 
-                        Log.d("WeatherApp", "Response: " + latitude);
-                        Log.d("WeatherApp", "Response: " + longitude);
+                        Log.d("HomeWeatherFragment", "latitude: " + latitude);
+                        Log.d("HomeWeatherFragment", "longitude: " + longitude);
 
                     }
                 }, new Response.ErrorListener() {
@@ -209,7 +209,7 @@ public class HomeWeatherFragment extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        Log.d("WeatherApp", "fetchWeatherData is called");
+                        Log.d("HomeWeatherFragment", "fetchWeatherData is called");
 
                         try {
                             // 解析天气数据，提取当天的数据

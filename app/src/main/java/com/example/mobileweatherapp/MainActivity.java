@@ -88,11 +88,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(viewPagerAdapter);
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            // 设置 Tab 标题
-            tab.setText(titles.get(position));
 
-            // 设置内容描述
-            tab.setContentDescription("Tab " + titles.get(position));
         }).attach();
 
         // 2) 新增：注册一个 ActivityResultLauncher 用来替代 onActivityResult
