@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
 
             // 重新绑定 TabLayout 和 ViewPager2
             new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-                tab.setText(titles.get(position));
+                //tab.setText(titles.get(position));
             }).attach();
         }
     }
