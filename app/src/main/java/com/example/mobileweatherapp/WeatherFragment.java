@@ -1,6 +1,7 @@
 package com.example.mobileweatherapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -36,7 +39,7 @@ public class WeatherFragment extends Fragment {
 
     private RequestQueue requestQueue;
     private boolean isFavorite = false; // 用于跟踪当前状态
-    private FloatingActionButton fabAddToFavorites; // 定义 FloatingActionButton
+    private FloatingActionButton fabRemoveFromFav; // 定义 FloatingActionButton
 
     private LinearLayout progressLayout;
     private RelativeLayout mainContent;
@@ -149,6 +152,16 @@ public class WeatherFragment extends Fragment {
 
                 startActivity(intent);
             }
+        });
+
+        fabRemoveFromFav = view.findViewById(R.id.fab_remove_from_favorites);
+
+        // 初始化 RequestQueue
+        requestQueue = Volley.newRequestQueue(requireContext());
+
+        // 设置点击监听器
+        fabRemoveFromFav.setOnClickListener(v -> {
+            deleteFavoriteCity(city);
         });
 
         return view;
@@ -333,4 +346,30 @@ public class WeatherFragment extends Fragment {
         progressLayout.setVisibility(View.GONE);
         mainContent.setVisibility(View.VISIBLE);
     }
+
+    private void deleteFavoriteCity(String city) {
+        String url = "https://backend-dot-weather-search-project-440903.wl.r.appspot.com/api/favorites/" + Uri.encode(city);
+
+        StringRequest request = new StringRequest(Request.Method.DELETE, url,
+                response -> {
+                    Log.d("WeatherFragment", city + " removed from favorites");
+
+                    // 通知主界面更新
+                    notifyHomeScreenToUpdate(city);
+                },
+                error -> {
+                    Log.e("WeatherFragment", "Failed to remove favorite");
+                    error.printStackTrace();
+                });
+
+        requestQueue.add(request);
+    }
+
+    private void notifyHomeScreenToUpdate(String city) {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).removeCityFromFavorites(city);
+        }
+    }
+
+
 }

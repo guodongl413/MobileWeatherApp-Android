@@ -243,4 +243,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void removeCityFromFavorites(String city) {
+        int index = titles.indexOf(city);
+
+        if (index != -1) {
+            // 移除 Fragment 和标题
+            fragments.remove(index);
+            titles.remove(index);
+
+            // 通知适配器更新
+            viewPagerAdapter.notifyDataSetChanged();
+
+            // 重新绑定 TabLayout 和 ViewPager2
+            new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+                tab.setText(titles.get(position));
+            }).attach();
+        }
+    }
+
+
 }

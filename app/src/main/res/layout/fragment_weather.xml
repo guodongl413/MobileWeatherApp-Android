@@ -318,6 +318,17 @@
 
         </RelativeLayout>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_remove_from_favorites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/rem_fav"
+            app:backgroundTint="@color/gray"
+            android:contentDescription="Remove from favorites" />
+
+
     </FrameLayout>
 
 </FrameLayout>
