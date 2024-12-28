@@ -1,6 +1,7 @@
 package com.example.mobileweatherapp;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -24,6 +25,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,6 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private SearchView searchView;
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
@@ -159,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         // 获取搜索视图并设置监听器
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchItem.setIcon(R.drawable.search); // 强制设置图标
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView = (SearchView) searchItem.getActionView();
         searchView.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         searchView.setQueryHint("Search for a city...");
@@ -179,6 +183,10 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        // 强制显示自定义的图标（确保在 menu.xml 设置了正确的图标）
+//        Drawable customIcon = ContextCompat.getDrawable(this, R.drawable.search);
+//        searchItem.setIcon(customIcon);
 
         return true;
     }
@@ -234,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
             // 初始化或更新适配器
             AutocompleteAdapter adapter = new AutocompleteAdapter(suggestions, suggestion -> {
                 // 填充搜索框并执行搜索
-                SearchView searchView = findViewById(R.id.action_search);
+//                searchView = findViewById(R.id.action_search);
                 searchView.setQuery(suggestion, false); // 填充搜索框
                 performSearch(suggestion); // 执行搜索
             });
